@@ -1,6 +1,9 @@
 services:
   frontend:
-    build: ./gashtemoon-front
+    build: 
+      context: ./gashtemoon-front
+      args:
+          REACT_APP_BASE_API: "http://backend:8000"
     ports:
       - "3000:3000"
     environment:
@@ -13,7 +16,7 @@ services:
   backend:
     build: ./gashtemoon-back
     ports:
-      - "5000:5000"
+      - "8000:8000"
     environment:
       - MONGO_URL=mongodb://mongo:27017/mydb
     depends_on:
@@ -22,15 +25,19 @@ services:
       - app-network
 
   panel:
-    build: ./gashtemoon-panel
+    build: 
+      context: ./gashtemoon-panel
+      args:
+          REACT_APP_BASE_API: "http://backend:8000"
     ports:
-      - "6000:6000"
+      - "4000:4000"
     environment:
-      - MONGO_URL=mongodb://mongo:27017/mydb
+      - CHOKIDAR_USEPOLLING=true
     depends_on:
-      - mongo
+      - backend
     networks:
       - app-network
+
   mongo:
     image: mongo
     restart: always
